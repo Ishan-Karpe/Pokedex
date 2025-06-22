@@ -26,30 +26,39 @@ def load_pokédex():
             try:
                 data = json.load(file)
                 pokédex = [Pokémon(**item) for item in data] # for each item in the JSON data, create a Pokémon object
-            except json.JSONDecodeError:
+            except (json.JSONDecodeError, TypeError):
                 pokédex = []
     else:
         pokédex = []
 
 def save_pokédex():
-    with open(DATA_PATH, 'w') as file: # dump() is used to write the pokédex data to a JSON file
-        json.dump([pokemon.to_dict() for pokemon in pokédex], file, indent=4) # Save the pokédex to a JSON file with indentation for readability
+    TEMP_DATA_PATH = DATA_PATH + ".tmp"
+    with open(TEMP_DATA_PATH, 'w') as file:
+        json.dump([pokemon.to_dict() for pokemon in pokédex], file, indent=4)
+    os.replace(TEMP_DATA_PATH, DATA_PATH) # Atomically replace the old file with the new one
 
 def add_pokemon():
     name = input("Enter Pokémon name: ")
-    if name == '':
+    if not name.strip():
         print('Please give your Pokémon a name.')
-        return 
-    id = int(input("Enter Pokémon ID: "))
-    if not str(id).isnumeric() or id <= 0:
-        print('Please provide an ID for your Pokémon.')
         return
-    types = input("Enter Pokémon types (comma separated): ").split(',')
-    if types == ['']:
+    try:
+        id_str = input("Enter Pokémon ID: ")
+        id = int(id_str)
+        if id <= 0:
+            print('ID must be a positive number.')
+            return
+    except ValueError:
+        print('Invalid ID. Please enter a number.')
+        return
+
+    types_input = input("Enter Pokémon types (comma separated): ")
+    types = [t.strip() for t in types_input.split(',') if t.strip()]
+    if not types:
         print('Please provide at least one type for your Pokémon.')
         return
     evolution = input("Enter Pokémon evolution: ")
-    if evolution == '':
+    if not evolution.strip():
         print('Please provide an evolution for your Pokémon.')
         return
     
@@ -59,10 +68,27 @@ def add_pokemon():
         if pokemon.name.lower() == name.lower() or pokemon.id == id:
             print(f"\033[1mA Pokémon with that name or ID already exists in your Pokédex!\033[0m")
             return  # Exit the function to prevent adding a duplicate
-    new_pokemon = Pokémon(name.strip(), int(id), [t.strip() for t in types], evolution.strip()) # Create a new Pokémon object with the provided details and append it to the pokédex
+    new_pokemon = Pokémon(name.strip(), id, types, evolution.strip()) # Create a new Pokémon object with the provided details and append it to the pokédex
     pokédex.append(new_pokemon)
     save_pokédex()
     print(f"\033[1mA{name} has been added to the Pokédex.\033[0m")
+
+def _find_pokemon(search_term, by='name'):
+    """Helper function to find a Pokémon by name or ID."""
+    if by == 'name':
+        search_term = search_term.lower()
+        for pokemon in pokédex:
+            if pokemon.name.lower() == search_term:
+                return pokemon
+    elif by == 'id':
+        try:
+            search_id = int(search_term)
+            for pokemon in pokédex:
+                if pokemon.id == search_id:
+                    return pokemon
+        except (ValueError, TypeError):
+            return None
+    return None
 
 def search_pokemon():
     try:
@@ -76,23 +102,19 @@ def search_pokemon():
         name = input('Enter Pokémon name to search: ')
         print()
         print(f'Searching for {name} in the Pokédex...')
-        for pokemon in pokédex:
-            if pokemon.name.lower() == name.lower():
-                print(f"\033[1mFound Pokémon: {pokemon.name}, ID: {pokemon.id}, Types: {', '.join(pokemon.types)}, Evolution: {pokemon.evolution}\033[0m")
-                return    #since it terminates no else is needed as if it fails it wont enter the loop
+        pokemon = _find_pokemon(name, by='name')
+        if pokemon:
+            print(f"\033[1mFound Pokémon: Name: {pokemon.name}, ID: {pokemon.id}, Types: {', '.join(pokemon.types)}, Evolution: {pokemon.evolution}\033[0m")
+            return
         print(f"\033[1mPokémon with name: {name} not found.\033[0m")
     elif choice1 == 2:
-        try:
-            id_search = int(input('Enter Pokémon ID to search: '))
-            print()
-        except ValueError:
-            print("Invalid ID. Please enter a number.")
-            return
+        id_search = input('Enter Pokémon ID to search: ')
+        print()
         print(f'Searching for {id_search} in the Pokédex...')
-        for pokemon in pokédex:
-            if pokemon.id == id_search:
-                print(f"Found Pokémon: {pokemon.id}, Name: {pokemon.name}, Types: {', '.join(pokemon.types)}, Evolution: {pokemon.evolution}")
-                return
+        pokemon = _find_pokemon(id_search, by='id')
+        if pokemon:
+            print(f"\033[1mFound Pokémon: Name: {pokemon.name}, ID: {pokemon.id}, Types: {', '.join(pokemon.types)}, Evolution: {pokemon.evolution}\033[0m")
+            return
         print("\033[1mPokémon not found.\033[0m")
     else:
         print('Invalid choice, please try again.')
@@ -110,22 +132,11 @@ def remove_pokemon():
 
     pokemon_to_remove = None
     if choice == 1:
-        name = input('Enter Pokémon name to remove: ').lower()
-        for p in pokédex:
-            if p.name.lower() == name:
-                pokemon_to_remove = p
-                break
+        name = input('Enter Pokémon name to remove: ')
+        pokemon_to_remove = _find_pokemon(name, by='name')
     elif choice == 2:
-        try:
-            id_str = input('Enter Pokémon ID to remove: ')
-            id_remove = int(id_str)
-        except ValueError:
-            print("Invalid ID. Please enter a number.")
-            return
-        for p in pokédex:
-            if p.id == id_remove:
-                pokemon_to_remove = p
-                break
+        id_remove = input('Enter Pokémon ID to remove: ')
+        pokemon_to_remove = _find_pokemon(id_remove, by='id')
     else:
         print("Invalid choice. Please try again.")
         return
