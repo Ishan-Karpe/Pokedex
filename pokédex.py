@@ -37,36 +37,66 @@ def save_pokédex():
 
 def add_pokemon():
     name = input("Enter Pokémon name: ")
-    id = input("Enter Pokémon ID: ")
-    if not id.isdigit():
-        print("ID must be a number.")
+    if name == '':
+        print('Please give your Pokémon a name.')
+        return 
+    id = int(input("Enter Pokémon ID: "))
+    if not id.isdigit() or id <= 0:
+        print('Please provide an ID for your Pokémon.')
         return
     types = input("Enter Pokémon types (comma separated): ").split(',')
+    if types == ['']:
+        print('Please provide at least one type for your Pokémon.')
+        return
     evolution = input("Enter Pokémon evolution: ")
+    if evolution == '':
+        print('Please provide an evolution for your Pokémon.')
+        return
 
-                          #name,        id,         types,          evolution
+
+    for pokemon in pokédex:
+        if pokemon.name.lower() == name.lower() or pokemon.id == id:
+            print(f"A Pokémon with that name or ID already exists in your Pokédex!")
+            return  # Exit the function to prevent adding a duplicate
     new_pokemon = Pokémon(name.strip(), int(id), [t.strip() for t in types], evolution.strip()) # Create a new Pokémon object with the provided details and append it to the pokédex
     pokédex.append(new_pokemon)
     save_pokédex()
     print(f"{name} has been added to the Pokédex.")
 
 def search_pokemon():
-    name = input('Enter Pokémon name to search: ')
-    for pokemon in pokédex:
-        if pokemon.name.lower() == name.lower():
-            print(f"Found Pokémon: {pokemon.name}, ID: {pokemon.id}, Types: {', '.join(pokemon.types)}, Evolution: {pokemon.evolution}")
-            return
-    print("Pokémon not found.")
-
-def view_all():
-    print('Searching for all Pokémon in the Pokédex...')
-    if not pokédex:
-        print("Pokédex is empty.")
+    try:
+        choice1 = int(input('Would you like to search by name (1) or id (2)? Enter 1 or 2 for your choice: '))
+    except ValueError:
+        print("Invalid choice. Please enter a number.")
         return
-    else:
+
+    if choice1 == 1:
+        name = input('Enter Pokémon name to search: ')
+        print(f'Searching for {name} in the Pokédex...')
         for pokemon in pokédex:
-            print(f'Found {pokemon.name} in the Pokédex:')
-            print(f"Name: {pokemon.name}, ID: {pokemon.id}, Types: {', '.join(pokemon.types)}, Evolution: {pokemon.evolution}")
+            if pokemon.name.lower() == name.lower():
+                print(f"Found Pokémon: {pokemon.name}, ID: {pokemon.id}, Types: {', '.join(pokemon.types)}, Evolution: {pokemon.evolution}")
+                return    #since it terminates no else is needed as if it fails it wont enter the loop
+        print(f"Pokémon with name: {name} not found.")
+    elif choice1 == 2:
+        try:
+            id_search = int(input('Enter Pokémon ID to search: '))
+        except ValueError:
+            print("Invalid ID. Please enter a number.")
+            return
+        print(f'Searching for {id_search} in the Pokédex...')
+        for pokemon in pokédex:
+            if pokemon.id == id_search:
+                print(f"Found Pokémon: {pokemon.id}, Name: {pokemon.name}, Types: {', '.join(pokemon.types)}, Evolution: {pokemon.evolution}")
+                return
+        print(f"Pokémon with id: {id_search} not found.")
+    else:
+        print('Invalid choice, please try again.')
+
+
+def remove_pokemon():
+    pass
+
 
 def main():
     load_pokédex()
@@ -74,7 +104,7 @@ def main():
         print("\n Pokédex Menu:")
         print("1. Add Pokémon")
         print("2. Search Pokémon")
-        print("3. View All Pokémon")
+        print("3. Remove Pokémon")
         print("4. Exit")
         choice = int(input("Enter your choice: "))
         if choice == 1:
@@ -82,7 +112,7 @@ def main():
         elif choice == 2:
             search_pokemon()
         elif choice == 3:
-            view_all()
+            remove_pokemon()
         elif choice == 4:
             save_pokédex()
             print("Exiting Pokédex.")
