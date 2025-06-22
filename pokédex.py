@@ -41,7 +41,7 @@ def add_pokemon():
         print('Please give your Pokémon a name.')
         return 
     id = int(input("Enter Pokémon ID: "))
-    if not id.isdigit() or id <= 0:
+    if not str(id).isnumeric() or id <= 0:
         print('Please provide an ID for your Pokémon.')
         return
     types = input("Enter Pokémon types (comma separated): ").split(',')
@@ -52,35 +52,39 @@ def add_pokemon():
     if evolution == '':
         print('Please provide an evolution for your Pokémon.')
         return
-
+    
+    print()
 
     for pokemon in pokédex:
         if pokemon.name.lower() == name.lower() or pokemon.id == id:
-            print(f"A Pokémon with that name or ID already exists in your Pokédex!")
+            print(f"\033[1mA Pokémon with that name or ID already exists in your Pokédex!\033[0m")
             return  # Exit the function to prevent adding a duplicate
     new_pokemon = Pokémon(name.strip(), int(id), [t.strip() for t in types], evolution.strip()) # Create a new Pokémon object with the provided details and append it to the pokédex
     pokédex.append(new_pokemon)
     save_pokédex()
-    print(f"{name} has been added to the Pokédex.")
+    print(f"\033[1mA{name} has been added to the Pokédex.\033[0m")
 
 def search_pokemon():
     try:
         choice1 = int(input('Would you like to search by name (1) or id (2)? Enter 1 or 2 for your choice: '))
+        print()
     except ValueError:
         print("Invalid choice. Please enter a number.")
         return
 
     if choice1 == 1:
         name = input('Enter Pokémon name to search: ')
+        print()
         print(f'Searching for {name} in the Pokédex...')
         for pokemon in pokédex:
             if pokemon.name.lower() == name.lower():
-                print(f"Found Pokémon: {pokemon.name}, ID: {pokemon.id}, Types: {', '.join(pokemon.types)}, Evolution: {pokemon.evolution}")
+                print(f"\033[1mFound Pokémon: {pokemon.name}, ID: {pokemon.id}, Types: {', '.join(pokemon.types)}, Evolution: {pokemon.evolution}\033[0m")
                 return    #since it terminates no else is needed as if it fails it wont enter the loop
-        print(f"Pokémon with name: {name} not found.")
+        print(f"\033[1mPokémon with name: {name} not found.\033[0m")
     elif choice1 == 2:
         try:
             id_search = int(input('Enter Pokémon ID to search: '))
+            print()
         except ValueError:
             print("Invalid ID. Please enter a number.")
             return
@@ -89,14 +93,67 @@ def search_pokemon():
             if pokemon.id == id_search:
                 print(f"Found Pokémon: {pokemon.id}, Name: {pokemon.name}, Types: {', '.join(pokemon.types)}, Evolution: {pokemon.evolution}")
                 return
-        print(f"Pokémon with id: {id_search} not found.")
+        print("\033[1mPokémon not found.\033[0m")
     else:
         print('Invalid choice, please try again.')
 
 
 def remove_pokemon():
-    pass
+    """Removes a Pokémon from the Pokédex by name or ID."""
+    try:
+        choice_str = input('Remove by name (1) or ID (2)? Enter 1 or 2: ')
+        print()
+        choice = int(choice_str)
+    except ValueError:
+        print("Invalid input. Please enter 1 or 2.")
+        return
 
+    pokemon_to_remove = None
+    if choice == 1:
+        name = input('Enter Pokémon name to remove: ').lower()
+        for p in pokédex:
+            if p.name.lower() == name:
+                pokemon_to_remove = p
+                break
+    elif choice == 2:
+        try:
+            id_str = input('Enter Pokémon ID to remove: ')
+            id_remove = int(id_str)
+        except ValueError:
+            print("Invalid ID. Please enter a number.")
+            return
+        for p in pokédex:
+            if p.id == id_remove:
+                pokemon_to_remove = p
+                break
+    else:
+        print("Invalid choice. Please try again.")
+        return
+
+    if pokemon_to_remove:
+        confirm = input(f"Are you sure you want to remove {pokemon_to_remove.name}? (y/n): ").lower()
+        print()
+        if confirm == 'y':
+            pokédex.remove(pokemon_to_remove)
+            save_pokédex()
+            print(f"\033[1mA{pokemon_to_remove.name} has been removed from the Pokédex.\033[0m")
+        else:
+            print("Removal cancelled.")
+    else:
+        print("Pokémon not found.")
+
+def view_all():
+    if not pokédex:
+        print("The Pokédex is empty.")
+        return
+
+    # Sort the pokédex list in-place by the name attribute of each Pokémon object
+    sorted_pokédex = sorted(pokédex, key=lambda p: p.name.lower())
+
+    print("\033[1m--- All Pokémon in Pokédex ---\033[0m")
+    for pokemon in sorted_pokédex:
+        print(f"Name: {pokemon.name}, ID: {pokemon.id}, Types: {', '.join(pokemon.types)}, Evolution: {pokemon.evolution}")
+    print("\033[1m----------------------------\033[0m")
 
 def main():
     load_pokédex()
@@ -105,8 +162,15 @@ def main():
         print("1. Add Pokémon")
         print("2. Search Pokémon")
         print("3. Remove Pokémon")
-        print("4. Exit")
-        choice = int(input("Enter your choice: "))
+        print("4. View All Pokémon")
+        print("5. Exit")
+        try:
+            choice_str = input("Enter your choice: ")
+            print()
+            choice = int(choice_str)
+        except ValueError:
+            print("Invalid choice. Please enter a number.")
+            continue
         if choice == 1:
             add_pokemon()
         elif choice == 2:
@@ -114,7 +178,10 @@ def main():
         elif choice == 3:
             remove_pokemon()
         elif choice == 4:
+            view_all()
+        elif choice == 5:
             save_pokédex()
+            print('Pokédex saved successfully.')
             print("Exiting Pokédex.")
             break
         else:
