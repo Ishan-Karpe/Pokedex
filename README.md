@@ -10,5 +10,5 @@
 ### Setup:
 - Run the file, no addtional modules needed.
 
-#### Demo:
-[This is an external link to genome.gov](https://www.genome.gov/)
+#### Demo Video:
+[Demo](https://drive.google.com/file/d/1zPaBYMiroT89qOOtzj-FPIkk-XuJtrs1/view?usp=sharing)

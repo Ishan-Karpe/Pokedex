@@ -1,5 +1,6 @@
 import json, os
-
+"Bulbasaur, grass, posion, ivysaur"
+"Charmander, fire, charmeleon"
 class Pokémon:
     def __init__(self, name: str, id: int, types: list[str], evolution: str):
         self.name = name
@@ -15,9 +16,9 @@ class Pokémon:
             "evolution": self.evolution
         }
     
-pokédex = []
+pokédex = [] # collections of Pokémon objects
 
-DATA_PATH = "pokemons.json" # constants for file paths
+DATA_PATH = "pokemons.json"
 
 def load_pokédex():
     global pokédex
@@ -35,11 +36,11 @@ def save_pokédex():
     TEMP_DATA_PATH = DATA_PATH + ".tmp"
     with open(TEMP_DATA_PATH, 'w') as file:
         json.dump([pokemon.to_dict() for pokemon in pokédex], file, indent=4)
-    os.replace(TEMP_DATA_PATH, DATA_PATH) # Atomically replace the old file with the new one
+    os.replace(TEMP_DATA_PATH, DATA_PATH) # replace the old file with the new one
 
 def add_pokemon():
     name = input("Enter Pokémon name: ")
-    if not name.strip():
+    if not name.strip(): # Check if the name is empty or just whitespace
         print('Please give your Pokémon a name.')
         return
     try:
@@ -71,10 +72,9 @@ def add_pokemon():
     new_pokemon = Pokémon(name.strip(), id, types, evolution.strip()) # Create a new Pokémon object with the provided details and append it to the pokédex
     pokédex.append(new_pokemon)
     save_pokédex()
-    print(f"\033[1mA{name} has been added to the Pokédex.\033[0m")
+    print(f"\033[1mA {name} has been added to the Pokédex.\033[0m")
 
-def _find_pokemon(search_term, by='name'):
-    """Helper function to find a Pokémon by name or ID."""
+def _find_pokemon(search_term, by='name'): #Helper function to find a Pokémon by name or ID
     if by == 'name':
         search_term = search_term.lower()
         for pokemon in pokédex:
@@ -147,7 +147,7 @@ def remove_pokemon():
         if confirm == 'y':
             pokédex.remove(pokemon_to_remove)
             save_pokédex()
-            print(f"\033[1mA{pokemon_to_remove.name} has been removed from the Pokédex.\033[0m")
+            print(f"\033[1mA {pokemon_to_remove.name} has been removed from the Pokédex.\033[0m")
         else:
             print("Removal cancelled.")
     else:
