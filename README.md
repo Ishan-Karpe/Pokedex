@@ -9,6 +9,3 @@
 
 ### Setup:
 - Run the file, no addtional modules needed.
-
-#### Demo Video:
-[Demo](https://drive.google.com/file/d/1zPaBYMiroT89qOOtzj-FPIkk-XuJtrs1/view?usp=sharing)
