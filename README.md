@@ -8,4 +8,12 @@
 - Proper Error Handling
 
 ### Setup:
-- Run the file, no addtional modules needed.
+- I have created a pypi package: https://pypi.org/project/pokedex-python/0.0.1/
+
+install it and follow this:
+
+```
+from pokedex_python import pokédex
+
+pokédex.main()
+``` 
