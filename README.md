@@ -1,12 +1,12 @@
 # Pokédex
 
 ## Features:
-✅ Add new Pokémon with validation
-🔍 Search Pokémon by name or ID
-🗑️ Remove Pokémon with confirmation
-📋 View all Pokémon
-💾 Persistent storage using JSON
-🛡️ Input validation and error handling
+1. ✅ Add new Pokémon with validation
+2. 🔍 Search Pokémon by name or ID
+3. 🗑️ Remove Pokémon with confirmation
+4. 📋 View all Pokémon
+5. 💾 Persistent storage using JSON
+6. 🛡️ Input validation and error handling
 
 ### Setup:
 - I have created a pypi package: https://pypi.org/project/pokedex-python/0.0.1/
