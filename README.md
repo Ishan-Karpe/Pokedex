@@ -26,7 +26,7 @@ Pokedex/
 ├── README.md           # This file
 └── requirements.txt    # Dependencies
 ```
-
+```
 ### Sample Usage:
 Enter Pokémon name: Pikachu
 Enter Pokémon ID: 25
@@ -34,5 +34,5 @@ Enter Pokémon types (comma separated): electric
 Enter Pokémon evolution: Raichu
 
 A Pikachu has been added to the Pokédex.
-
+```
 
