@@ -1,11 +1,12 @@
 # Pokédex
 
 ## Features:
-- Add Pokémon
-- Search Pokémon
-- Remove Pokémon
-- View All Pokémon
-- Proper Error Handling
+✅ Add new Pokémon with validation
+🔍 Search Pokémon by name or ID
+🗑️ Remove Pokémon with confirmation
+📋 View all Pokémon
+💾 Persistent storage using JSON
+🛡️ Input validation and error handling
 
 ### Setup:
 - I have created a pypi package: https://pypi.org/project/pokedex-python/0.0.1/
@@ -17,3 +18,19 @@ from pokedex_python import pokédex
 
 pokédex.main()
 ``` 
+### Structure:
+Pokedex/
+├── pokédex.py          # Main application file
+├── pokemons.json       # Data storage (created automatically)
+├── README.md           # This file
+└── requirements.txt    # Dependencies
+
+### Sample Usage:
+Enter Pokémon name: Pikachu
+Enter Pokémon ID: 25
+Enter Pokémon types (comma separated): electric
+Enter Pokémon evolution: Raichu
+
+A Pikachu has been added to the Pokédex.
+
+
