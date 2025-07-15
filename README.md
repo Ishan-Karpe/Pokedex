@@ -19,11 +19,13 @@ from pokedex_python import pokédex
 pokédex.main()
 ``` 
 ### Structure:
+```
 Pokedex/
 ├── pokédex.py          # Main application file
 ├── pokemons.json       # Data storage (created automatically)
 ├── README.md           # This file
 └── requirements.txt    # Dependencies
+```
 
 ### Sample Usage:
 Enter Pokémon name: Pikachu
